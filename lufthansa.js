@@ -220,7 +220,11 @@ return (function() {
 		};
 	};
 
-	function snapshot(prefix, interval) {
+	page.type = function(text, modifier) {
+		return function() { page.write(text, modifier); };
+	};
+
+	page.snapshot = function(prefix, interval) {
 		return function() {
 			var x = 0;
 
@@ -252,11 +256,11 @@ return (function() {
 					reject("open");
 			});
 		})
-		.then(snapshot("lufthansa.png", 10))
+		.then(page.snapshot("lufthansa.png", 10))
 		.then(page.waitForPresence("#cl-country > option[value='BR']"))
 		.then(page.waitForAndClick("#cl-country"))
 		.then(page.waitForFocus("#cl-country"))
-		.then(function() { page.write("BRA↵"); })
+		.then(page.type("BRA↵"))
 		.then(page.waitForPresence("#cl-language > option[value='pt']"))
 	//	.then(page.waitForAndClick("#cl-language"))
 	//	.then(page.waitForFocus("#cl-language"))
@@ -273,16 +277,16 @@ return (function() {
 	// origin airport
 				.then(page.waitForAndClick("#flightmanagerFlightsFormOrigin"))
 				.then(page.waitForFocus("#flightmanagerFlightsFormOrigin"))
-				.then(function() { page.write("A", 0x04000000); })
-				.then(function() { page.write(origin); })
+				.then(page.type("A", 0x04000000))
+				.then(page.type(origin))
 	//			.then(page.waitPageLoad());
 				.then(page.waitForAndClick("li[aria-label='" + lufthansa_airports[origin].ext + "']"))
 
 	// destination airport
 				.then(page.waitForAndClick("#flightmanagerFlightsFormDestination"))
 				.then(page.waitForFocus("#flightmanagerFlightsFormDestination"))
-				.then(function() { page.write("A", 0x04000000); })
-				.then(function() { page.write(destination); })
+				.then(page.type("A", 0x04000000))
+				.then(page.type(destination))
 				.then(page.waitForAndClick("li[aria-label='" + lufthansa_airports[destination].ext + "']"))
 
 	// dates
