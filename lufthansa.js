@@ -6,8 +6,7 @@ return (function() {
 
 	var Promise = require('es6-promise').Promise;
 
-	function LufthansaConnection() {
-		var page = require('./page').create();
+	function LufthansaConnection(page) {
 		this.page = page;
 
 		console.log("setup()");
@@ -79,17 +78,6 @@ return (function() {
 		return this;
 	};
 
-	LufthansaConnection.prototype.render = function(to) {
-		var page = this.page;
-
-		this.promise = this.promise.then(function() { 
-			console.log('rendering page to ' + to);
-			page.render(to);
-		});
-
-		return this;
-	};
-
 	LufthansaConnection.prototype.reset = function() {
 		var page = this.page;
 
@@ -116,8 +104,8 @@ return (function() {
 		return this;
 	};
 
-	exports.connect = function() {
-		return new LufthansaConnection();
+	exports.connect = function(page) {
+		return new LufthansaConnection(page);
 	};
 
 	return exports;

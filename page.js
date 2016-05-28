@@ -155,7 +155,7 @@
 						if (status == 'success')
 							resolve();
 						else
-							reject("fail to continue");
+							reject("fail to continue: " + status);
 					};
 				});
 			}
