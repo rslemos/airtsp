@@ -4,17 +4,24 @@ return (function() {
 	lufthansa_airports['FRA'] = { ext: "Frankfurt Alemanha" };
 	lufthansa_airports['GRU'] = { ext: "Sao Paulo - Guarulhos International Brasil                             " };
 
-	var page = require('./page').create();
 	var Promise = require('es6-promise').Promise;
 
-	exports.render = function(to) {
+	function LufthansaConnection() {
+		this.page = require('./page').create();
+	}
+
+	LufthansaConnection.prototype.render = function(to) {
+		var page = this.page;
+
 		return function() { 
 			console.log('rendering page to ' + to);
 			page.render(to);
 		};
-	}
+	};
 
-	exports.setup = function() {
+	LufthansaConnection.prototype.setup = function() {
+		var page = this.page;
+
 		console.log("setup()");
 		return new Promise(function(resolve, reject) {
 			console.log("opening lufthansa");
@@ -41,7 +48,9 @@ return (function() {
 		.then(page.waitPageLoad());
 	}
 
-	exports.find = function(origin, destination, fromDate, toDate) {
+	LufthansaConnection.prototype.find = function(origin, destination, fromDate, toDate) {
+		var page = this.page;
+
 		return function(x) {
 			console.log("will actually find(...)");
 			return Promise
@@ -78,9 +87,11 @@ return (function() {
 				.then(page.waitPageLoad())
 				.then(page.waitForPresence("section#inner"));
 		};
-	}
+	};
 
-	exports.reset = function() {
+	LufthansaConnection.prototype.reset = function() {
+		var page = this.page;
+
 		return function(x) {
 			console.log("resetting");
 			return Promise
@@ -89,6 +100,10 @@ return (function() {
 				.then(page.waitPageLoad());
 		};
 	}
+
+	exports.connect = function() {
+		return new LufthansaConnection();
+	};
 
 	return exports;
 }).call(this);
