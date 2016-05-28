@@ -10,7 +10,7 @@ lufthansa.setup()
 	console.log("ERROR: " + error);
 	lufthansa.render('error.png')();
 })
-.then(lufthansa.exit)
+.then(phantom.exit)
 ;
 
 console.log("Waiting for queued promises to complete");

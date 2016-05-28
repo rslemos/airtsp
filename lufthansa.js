@@ -46,17 +46,6 @@ return (function() {
 		return o;
 	}
 
-	exports.exit = function() {
-		phantom.exit();
-	}
-
-	exports.render = function(to) {
-		return function() { 
-			console.log('rendering page to ' + to);
-			page.render(to);
-		};
-	}
-
 	// works because phantomjs do not scroll
 	function sb_getBoundingClientRect(selector) { return document.querySelector(selector).getBoundingClientRect(); }
 
@@ -241,6 +230,12 @@ return (function() {
 
 	console.log("page stuffed");
 
+	exports.render = function(to) {
+		return function() { 
+			console.log('rendering page to ' + to);
+			page.render(to);
+		};
+	}
 
 	exports.setup = function() {
 		console.log("setup()");
