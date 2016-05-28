@@ -7,23 +7,11 @@ return (function() {
 	var Promise = require('es6-promise').Promise;
 
 	function LufthansaConnection() {
-		this.page = require('./page').create();
-	}
-
-	LufthansaConnection.prototype.render = function(to) {
-		var page = this.page;
-
-		return function() { 
-			console.log('rendering page to ' + to);
-			page.render(to);
-		};
-	};
-
-	LufthansaConnection.prototype.setup = function() {
-		var page = this.page;
+		var page = require('./page').create();
+		this.page = page;
 
 		console.log("setup()");
-		return new Promise(function(resolve, reject) {
+		this.promise = new Promise(function(resolve, reject) {
 			console.log("opening lufthansa");
 
 			page.open("http://www.lufthansa.com", function(status) {
@@ -46,12 +34,12 @@ return (function() {
 	//	.then(function() { page.write("POR↵"); })
 		.then(page.waitForAndClick("button"))
 		.then(page.waitPageLoad());
-	}
+	};
 
 	LufthansaConnection.prototype.find = function(origin, destination, fromDate, toDate) {
 		var page = this.page;
 
-		return function(x) {
+		this.promise = this.promise.then(function(x) {
 			console.log("will actually find(...)");
 			return Promise
 				.resolve(x)
@@ -86,20 +74,47 @@ return (function() {
 				.then(page.waitForAndClick("#flightmanager-tabpanel-1 button[type=submit]"))
 				.then(page.waitPageLoad())
 				.then(page.waitForPresence("section#inner"));
-		};
+		});
+
+		return this;
+	};
+
+	LufthansaConnection.prototype.render = function(to) {
+		var page = this.page;
+
+		this.promise = this.promise.then(function() { 
+			console.log('rendering page to ' + to);
+			page.render(to);
+		});
+
+		return this;
 	};
 
 	LufthansaConnection.prototype.reset = function() {
 		var page = this.page;
 
-		return function(x) {
+		this.promise = this.promise.then(function(x) {
 			console.log("resetting");
 			return Promise
 				.resolve(x)
 				.then(page.waitForAndClick("a#header-logo"))
 				.then(page.waitPageLoad());
-		};
-	}
+		});
+
+		return this;
+	};
+
+	LufthansaConnection.prototype.then = function(x) {
+		this.promise = this.promise.then(x);
+
+		return this;
+	};
+
+	LufthansaConnection.prototype.catch = function(x) {
+		this.promise = this.promise.catch(x);
+
+		return this;
+	};
 
 	exports.connect = function() {
 		return new LufthansaConnection();
