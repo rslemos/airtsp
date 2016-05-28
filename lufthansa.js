@@ -57,38 +57,17 @@ return (function() {
 		};
 	}
 
-	function sb_getBoundingClientRect(selector) {
-		// works because phantomjs do not scroll
-		console.log("sb_getBoundingClientRect(" + selector + ")");
-		return document.querySelector(selector).getBoundingClientRect();
-	}
-
-	function sb_isSelectorPresent(selector) {
-		return document.querySelector(selector) !=  null;
-	}
-
-	function sb_isSelectorAbsent(selector) {
-		return document.querySelector(selector) ==  null;
-	}
-
-	function sb_isSelectorFocused(selector) {
-		return document.querySelector(selector) ==  document.activeElement;
-	}
-
-	function sb_doesSelectorContain(selector, contents) {
-		return document.querySelector(selector).innerText == contents;
-	}
+	// works because phantomjs do not scroll
+	function sb_getBoundingClientRect(selector) { return document.querySelector(selector).getBoundingClientRect(); }
 
 	function isSelectorPresent(selector) {
-		return function(page) {
-			return page.evaluate(sb_isSelectorPresent, selector);
-		};
+		function sb_isSelectorPresent(selector) { return document.querySelector(selector) !=  null; }
+		return function(page) { return page.evaluate(sb_isSelectorPresent, selector); };
 	}
 
 	function isSelectorAbsent(selector) {
-		return function(page) {
-			return page.evaluate(sb_isSelectorAbsent, selector);
-		};
+		function sb_isSelectorAbsent(selector) { return document.querySelector(selector) ==  null; }
+		return function(page) { return page.evaluate(sb_isSelectorAbsent, selector); };
 	}
 
 	function isSelectorVisible(selector) {
@@ -99,15 +78,13 @@ return (function() {
 	}
 
 	function isSelectorFocused(selector) {
-		return function(page) {
-			return page.evaluate(sb_isSelectorFocused, selector);
-		};
+		function sb_isSelectorFocused(selector) { return document.querySelector(selector) ==  document.activeElement; }
+		return function(page) { return page.evaluate(sb_isSelectorFocused, selector); };
 	}
 
 	function doesSelectorContain(selector, contents) {
-		return function(page) {
-			return page.evaluate(sb_doesSelectorContain, selector, contents);
-		};
+		function sb_doesSelectorContain(selector, contents) { return document.querySelector(selector).innerText == contents; }
+		return function(page) { return page.evaluate(sb_doesSelectorContain, selector, contents); };
 	}
 
 	page.click = function(selector) {
